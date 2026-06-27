@@ -1,135 +1,158 @@
-GED Smart Study Analytics System
-=================================
+# GED Smart Study Analytics System
 
-Overview
---------
-This project is a rule-based analytics and decision-support system for GED students.
+## Overview
 
-It processes study log data exported from Google Sheets and converts it into structured insights such as:
+The GED Smart Study Analytics System is a rule-based analytics and decision-support system designed to support GED students throughout their exam preparation.
 
-- Performance trends
-- Diagnostic analysis of weaknesses
-- Exam readiness scoring
-- Cross-subject pattern detection
-- Actionable study recommendations
+This project builds upon an existing Google Sheets study tracker by adding an intelligence layer that interprets study patterns rather than simply recording them. It analyzes exported study log data to generate meaningful insights, including:
 
-It is designed as an intelligence layer on top of a simple spreadsheet tracker.
+* Performance trends
+* Diagnostic analysis of learning weaknesses
+* Exam readiness scoring
+* Cross-subject pattern detection
+* Actionable study recommendations
 
----
-
-Problem
--------
-Spreadsheet trackers (e.g., Google Sheets) only display raw study data.
-
-They do not explain:
-- Why performance is changing
-- Whether weaknesses are skill-based or subject-based
-- How ready the student is for the exam
-- What actions should be taken next
+As more study data is collected, the system is able to provide increasingly meaningful and personalized insights.
 
 ---
 
-Solution
---------
-This system enhances traditional tracking by adding an analytical reasoning layer.
+## Problem
 
-It transforms raw study logs into:
+Spreadsheet trackers are useful for recording study data but provide limited analytical insight.
 
-1. Trend Analysis
-   Detects improvement, decline, or stability.
+While they organize information effectively, they cannot answer questions such as:
 
-2. Diagnostic Analysis
-   Identifies root causes such as:
-   - Low performance
-   - Inconsistent understanding
-   - Insufficient study time
-
-3. Readiness Scoring
-   Computes a transparent readiness score based on:
-   - Performance
-   - Study effort
-   - Consistency
-   - Recent trends
-
-4. Cross-Subject Insights
-   Detects shared weaknesses across subjects (e.g., reading comprehension issues).
-
-5. Recommendation Engine
-   Produces prioritized, actionable study guidance.
+* Why is performance improving or declining?
+* Are weaknesses isolated to one subject or shared across multiple subjects?
+* How prepared is the student for the GED exam?
+* What should the student focus on next?
 
 ---
 
-System Architecture
--------------------
+## Solution
 
-data_loader.py
-→ Loads study log CSV file
+This project extends spreadsheet-based tracking by adding a structured analytical reasoning layer.
 
-validator.py
-→ Cleans and validates raw data
+The system transforms raw study logs into educational insights through several independent analytics engines.
 
-analytics_engine.py
-→ Detects trends in performance (WHAT is happening)
+### Trend Analysis
 
-diagnostic_engine.py
-→ Identifies root causes and cross-subject patterns (WHY it is happening)
+Detects whether performance is improving, declining, or remaining stable.
 
-readiness_engine.py
-→ Calculates exam readiness score (HOW ready the student is)
+### Diagnostic Analysis
 
-recommendation_engine.py
-→ Generates prioritized study actions (WHAT to do next)
+Identifies possible causes of weak performance, including:
 
-analytics.py
-→ Main entry point that generates the final report
+* Low average scores
+* Inconsistent understanding
+* Insufficient study time
 
----
+### Readiness Scoring
 
-Data Source
-------------
-The system uses a single dataset:
+Calculates an explainable readiness score using:
 
-- ged_smart_study_tracker_study_log.csv (Google Sheets export)
+* Subject performance
+* Study effort
+* Learning consistency
+* Recent performance trends
 
-Important:
-The CSV file must be placed in the root directory of the project (same folder as analytics.py).
+### Cross-Subject Insights
 
----
+Detects patterns shared across multiple subjects, such as potential reading comprehension weaknesses affecting both RLA and Social Studies.
 
-Key Features
-------------
-- End-to-end study analytics pipeline
-- Rule-based intelligence system (no machine learning required)
-- Transparent scoring model
-- Cross-subject reasoning
-- Actionable recommendations
-- Data validation and quality tracking
+### Recommendation Engine
+
+Generates prioritized and actionable study recommendations based on the detected learning patterns.
 
 ---
 
-Future Improvements
--------------------
-Planned enhancements:
+## System Architecture
 
-- Automatic Google Sheets API integration
-- Interactive dashboard (web-based UI)
-- Chat-based study assistant
-- Skill graph modeling (concept-to-skill mapping)
-- Personalized weekly study planner
-- PDF report export system
+**data_loader.py**
+
+Loads the study log exported from Google Sheets.
+
+**validator.py**
+
+Validates and cleans imported data.
+
+**analytics_engine.py**
+
+Analyzes overall and subject-level performance trends.
+
+**diagnostic_engine.py**
+
+Detects root causes and cross-subject learning patterns.
+
+**readiness_engine.py**
+
+Calculates overall exam readiness.
+
+**recommendation_engine.py**
+
+Generates prioritized study recommendations.
+
+**analytics.py**
+
+Runs the complete analytics pipeline and generates the final report.
 
 ---
 
-How to Run
------------
+## Data Source
 
-1. Install Python 3.8+
-2. Place the CSV file in the project root directory
-3. Run the system:
+The system currently uses a single dataset:
+
+`ged_smart_study_tracker_study_log.csv`
+
+This file should be placed in the project's root directory (the same directory as `analytics.py`).
+
+---
+
+## Key Features
+
+* Modular analytics pipeline
+* Rule-based decision support system
+* Transparent readiness scoring
+* Cross-subject reasoning
+* Actionable recommendations
+* Data validation and quality reporting
+
+---
+
+## Future Improvements
+
+Planned enhancements include:
+
+* Google Sheets API integration
+* Interactive web dashboard
+* Chat-based study assistant
+* Skill graph modelling
+* Personalized weekly study planner
+* PDF report generation
+
+---
+
+## How to Run
+
+1. Install Python 3.8 or later.
+2. Place `ged_smart_study_tracker_study_log.csv` in the project root directory.
+3. Run:
 
 ```bash
 python analytics.py
+```
+
+---
+
+## Project Highlights
+
+* Built entirely in Python using the standard library.
+* Extends an existing Google Sheets tracker with an analytical reasoning layer.
+* Uses modular analytics engines to separate trend analysis, diagnostics, readiness scoring, and recommendations.
+* Employs explainable rule-based reasoning instead of black-box machine learning.
+
+---
 
 ## Author
 
-Naychi Phyo
+**Naychi Phyo**
