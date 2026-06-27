@@ -1,92 +1,134 @@
-# GED Smart Study Tracker + Analytics System
+GED Smart Study Analytics System
+=================================
 
-## Overview
+Overview
+--------
+This project is a rule-based analytics and decision-support system for GED students.
 
-This project is an adaptive learning analytics system designed to help GED students track study performance and understand their learning progress using structured data analysis.
+It processes study log data exported from Google Sheets and converts it into structured insights such as:
 
-It converts study logs into insights such as performance trends, weak areas, readiness level, and study recommendations.
+- Performance trends
+- Diagnostic analysis of weaknesses
+- Exam readiness scoring
+- Cross-subject pattern detection
+- Actionable study recommendations
 
-## System Context
-
-This project extends a Google Sheets-based study tracking system by adding a Python-based intelligence layer.
-
-While Google Sheets is used for structured data entry and basic analysis, the Python engine enhances the system by identifying patterns, generating diagnostic insights, and producing adaptive recommendations.
-
-As more data is collected, the system becomes more accurate in detecting learning patterns, weaknesses, and study behavior trends.
-
----
-
-## Problem
-
-Students often study without structured feedback. They may not know:
-
-- which subjects are weak
-- whether performance is improving
-- if they are ready for the exam
-
-This leads to inefficient study planning.
+It is designed as an intelligence layer on top of a simple spreadsheet tracker.
 
 ---
 
-## Solution
+Problem
+-------
+Spreadsheet trackers (e.g., Google Sheets) only display raw study data.
 
-This system processes study data and generates structured insights through:
-
-- performance analysis
-- diagnostic reasoning
-- readiness scoring
-- recommendation generation
-
-It acts as a decision-support system for self-directed learning.
-
----
-
-## System Structure
-
-Data Loader → Data Validator → Analytics Engine → Diagnostic Engine → Readiness Engine → Recommendation Engine
+They do not explain:
+- Why performance is changing
+- Whether weaknesses are skill-based or subject-based
+- How ready the student is for the exam
+- What actions should be taken next
 
 ---
 
-## Key Features
+Solution
+--------
+This system enhances traditional tracking by adding an analytical reasoning layer.
 
-- Load study data from Google Sheets (CSV export)
-- Validate and clean data
-- Analyze performance trends
-- Identify weak subjects and concepts
-- Generate readiness score
-- Provide study recommendations
+It transforms raw study logs into:
 
----
+1. Trend Analysis
+   Detects improvement, decline, or stability.
 
-## Example Output
+2. Diagnostic Analysis
+   Identifies root causes such as:
+   - Low performance
+   - Inconsistent understanding
+   - Insufficient study time
 
-Readiness Score: 54.77
-Status: At Risk
-Success Probability: 44.77%
+3. Readiness Scoring
+   Computes a transparent readiness score based on:
+   - Performance
+   - Study effort
+   - Consistency
+   - Recent trends
 
-Recommendations:
-- Improve Social Studies through targeted practice
-- Focus on weak concepts
-- Maintain consistency in Math
+4. Cross-Subject Insights
+   Detects shared weaknesses across subjects (e.g., reading comprehension issues).
 
----
-
-## Tech Stack
-
-- Python
-- CSV data processing
-- Rule-based analytics
+5. Recommendation Engine
+   Produces prioritized, actionable study guidance.
 
 ---
 
-## Future Improvements
+System Architecture
+-------------------
 
-- Google Sheets API integration for real-time data
-- AI-based chat assistant for study advice
-- Automated study planner
-- Visualization dashboard for progress tracking
+data_loader.py
+→ Loads study log CSV file
+
+validator.py
+→ Cleans and validates raw data
+
+analytics_engine.py
+→ Detects trends in performance (WHAT is happening)
+
+diagnostic_engine.py
+→ Identifies root causes and cross-subject patterns (WHY it is happening)
+
+readiness_engine.py
+→ Calculates exam readiness score (HOW ready the student is)
+
+recommendation_engine.py
+→ Generates prioritized study actions (WHAT to do next)
+
+analytics.py
+→ Main entry point that generates the final report
 
 ---
+
+Data Source
+------------
+The system uses a single dataset:
+
+- ged_smart_study_tracker_study_log.csv (Google Sheets export)
+
+Important:
+The CSV file must be placed in the root directory of the project (same folder as analytics.py).
+
+---
+
+Key Features
+------------
+- End-to-end study analytics pipeline
+- Rule-based intelligence system (no machine learning required)
+- Transparent scoring model
+- Cross-subject reasoning
+- Actionable recommendations
+- Data validation and quality tracking
+
+---
+
+Future Improvements
+-------------------
+Planned enhancements:
+
+- Automatic Google Sheets API integration
+- Interactive dashboard (web-based UI)
+- Chat-based study assistant
+- Skill graph modeling (concept-to-skill mapping)
+- Personalized weekly study planner
+- PDF report export system
+
+---
+
+How to Run
+-----------
+
+1. Install Python 3.8+
+2. Place the CSV file in the project root directory
+3. Run the system:
+
+```bash
+python analytics.py
 
 ## Author
 
