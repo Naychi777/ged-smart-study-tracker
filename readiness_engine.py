@@ -2,19 +2,18 @@ from collections import defaultdict
 
 
 # -----------------------------
-# 1. READINESS SCORE CALCULATION
+# READINESS ENGINE
 # -----------------------------
-def calculate_readiness(data, target_score=180):
-    """
-    Computes readiness score based on multiple behavioral signals.
-    This is a rule-based predictive model (not ML).
-    """
+def calculate_readiness(data):
 
     subject_scores = defaultdict(list)
     total_hours = 0
 
-    # Step 1: collect data
+    # -----------------------------
+    # Collect Data
+    # -----------------------------
     for row in data:
+
         subject = row["Subject"]
         score = float(row["Score"])
         hours = float(row["Time (hrs)"])
@@ -22,51 +21,140 @@ def calculate_readiness(data, target_score=180):
         subject_scores[subject].append(score)
         total_hours += hours
 
-    # Step 2: compute averages per subject
-    subject_avgs = []
     all_scores = []
 
+    consistency_penalty = 0
+
     for scores in subject_scores.values():
-        avg = sum(scores) / len(scores)
-        subject_avgs.append(avg)
+
         all_scores.extend(scores)
 
-    overall_avg = sum(all_scores) / len(all_scores)
-
-    # Step 3: consistency (stability signal)
-    consistency_penalty = 0
-    for scores in subject_scores.values():
         if len(scores) > 1:
+
             if max(scores) - min(scores) > 20:
                 consistency_penalty += 5
 
-    # Step 4: study effort score
-    effort_score = min(total_hours / 20 * 100, 100)
+    overall_average = sum(all_scores) / len(all_scores)
 
-    # Step 5: final readiness formula (transparent model)
-    readiness_score = (
-        (overall_avg * 0.5) +
-        (effort_score * 0.3) -
-        (consistency_penalty)
+    # -----------------------------
+    # COMPONENT 1
+    # Subject Performance (40)
+    # -----------------------------
+    performance_component = min(
+        (overall_average / 100) * 40,
+        40
     )
 
-    readiness_score = max(0, min(100, readiness_score))
+    # -----------------------------
+    # COMPONENT 2
+    # Study Effort (20)
+    # -----------------------------
+    effort_component = min(
+        (total_hours / 20) * 20,
+        20
+    )
 
-    # Step 6: interpret result
-    if readiness_score >= 75:
-        status = "Ready 🟢"
-    elif readiness_score >= 50:
-        status = "At Risk 🟡"
+    # -----------------------------
+    # COMPONENT 3
+    # Consistency (20)
+    # -----------------------------
+    consistency_component = max(
+        20 - consistency_penalty,
+        0
+    )
+
+    # -----------------------------
+    # COMPONENT 4
+    # Trend (20)
+    # -----------------------------
+    first_half = all_scores[:len(all_scores)//2]
+    second_half = all_scores[len(all_scores)//2:]
+
+    if len(first_half) > 0:
+
+        trend_change = (
+            sum(second_half) / len(second_half)
+        ) - (
+            sum(first_half) / len(first_half)
+        )
+
     else:
-        status = "Not Ready 🔴"
+        trend_change = 0
 
-    # Step 7: estimated probability (simple mapping)
-    probability = min(100, max(0, readiness_score - 10))
+    if trend_change >= 3:
+        trend_component = 20
 
+    elif trend_change >= 0:
+        trend_component = 15
+
+    elif trend_change >= -3:
+        trend_component = 10
+
+    else:
+        trend_component = 5
+
+    # -----------------------------
+    # FINAL SCORE
+    # -----------------------------
+    readiness_score = (
+        performance_component
+        + effort_component
+        + consistency_component
+        + trend_component
+    )
+
+    readiness_score = round(
+        min(readiness_score, 100),
+        2
+    )
+
+    # -----------------------------
+    # STATUS
+    # -----------------------------
+    if readiness_score >= 75:
+        status = "Ready"
+
+    elif readiness_score >= 50:
+        status = "At Risk"
+
+    else:
+        status = "Not Ready"
+
+    probability = round(
+        max(0, readiness_score - 10),
+        2
+    )
+
+    # -----------------------------
+    # RETURN
+    # -----------------------------
     return {
-        "readiness_score": round(readiness_score, 2),
+
+        "readiness_score": readiness_score,
+
         "status": status,
-        "estimated_success_probability": round(probability, 2),
-        "total_study_hours": total_hours,
-        "overall_average": round(overall_avg, 2)
+
+        "estimated_success_probability": probability,
+
+        "overall_average": round(overall_average, 2),
+
+        "total_study_hours": round(total_hours, 2),
+
+        # NEW
+        "breakdown": {
+
+            "Subject Performance":
+                round(performance_component, 2),
+
+            "Study Effort":
+                round(effort_component, 2),
+
+            "Consistency":
+                round(consistency_component, 2),
+
+            "Recent Trend":
+                round(trend_component, 2)
+
+        }
+
     }
