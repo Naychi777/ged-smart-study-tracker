@@ -7,78 +7,89 @@ from readiness_engine import calculate_readiness
 from recommendation_engine import run_recommendation_engine
 
 
+def print_section(title):
+    print("\n" + "=" * 60)
+    print(title)
+    print("=" * 60)
+
+
 def main():
 
-    # -----------------------------
-    # 1. LOAD DATA
-    # -----------------------------
     raw_data = load_study_log()
-
     datasets = {"study_log": raw_data}
 
-    # -----------------------------
-    # 2. VALIDATE DATA
-    # -----------------------------
-    clean_data, report = validate_data(datasets)
-
+    clean_data, validation_report = validate_data(datasets)
     study_data = clean_data["study_log"]
 
-    # -----------------------------
-    # 3. ANALYTICS ENGINE (WHAT)
-    # -----------------------------
-    analytics_result = run_engine(study_data)
+    analytics = run_engine(study_data)
+    diagnostic = run_diagnostic(study_data)
+    readiness = calculate_readiness(study_data)
+    recommendations = run_recommendation_engine(study_data)
 
-    # -----------------------------
-    # 4. DIAGNOSTIC ENGINE (WHY)
-    # -----------------------------
-    diagnostic_result = run_diagnostic(study_data)
+    print_section("GED SMART STUDY REPORT")
 
-    # -----------------------------
-    # 5. READINESS ENGINE (HOW READY)
-    # -----------------------------
-    readiness_result = calculate_readiness(study_data)
+    print("\nOVERALL INSIGHT")
+    print(analytics["overall_trend"]["trend"])
 
-    # -----------------------------
-    # 6. RECOMMENDATION ENGINE (WHAT TO DO)
-    # -----------------------------
-    recommendation_result = run_recommendation_engine(study_data)
+    print("\nREADINESS STATUS")
+    print(f"Score: {readiness['readiness_score']}")
+    print(f"Status: {readiness['status']}")
+    print(f"Estimated Success Probability: {readiness['estimated_success_probability']}%")
 
-    # -----------------------------
-    # 7. FINAL REPORT OUTPUT
-    # -----------------------------
-    print("\n==============================")
-    print("📊 GED SMART STUDY REPORT")
-    print("==============================")
+    print("\nREADINESS BREAKDOWN")
 
-    print("\n🧠 OVERALL INSIGHT")
-    print(analytics_result["overall_trend"])
+    for k, v in readiness["breakdown"].items():
+        print(f"{k:<25} {v}/100")
 
-    print("\n📈 READINESS STATUS")
-    print(f"Score: {readiness_result['readiness_score']}")
-    print(f"Status: {readiness_result['status']}")
-    print(f"Success Probability: {readiness_result['estimated_success_probability']}%")
+    print("\nDIAGNOSTIC ANALYSIS")
 
-    print("\n🧠 DIAGNOSTIC INSIGHT")
+    for subject, info in diagnostic["subject_diagnosis"].items():
 
-    for subject, info in diagnostic_result["subject_diagnosis"].items():
-        print(f"\n{subject}:")
-        print(f"  Avg Score: {info['average_score']}")
-        print(f"  Study Hours: {info['study_hours']}")
-        print(f"  Root Causes:")
+        print(f"\n{subject}")
+        print(f"Average Score: {info['average_score']}")
+        print(f"Study Hours: {info['study_hours']}")
+
+        print("Evidence:")
+        print(f"Sessions: {info['sessions']}")
+        print(f"Highest Score: {info['highest_score']}")
+        print(f"Lowest Score: {info['lowest_score']}")
+        print(f"Score Range: {info['score_range']}")
+
+        print("Root Causes:")
         for cause in info["root_causes"]:
-            print(f"   - {cause}")
+            print(f"- {cause}")
 
-    print("\n🎯 RECOMMENDATIONS")
+    # -----------------------------
+    # NEW SECTION
+    # -----------------------------
+    print("\nCROSS-SUBJECT INSIGHTS")
 
-    for rec in recommendation_result["recommendations"]:
-        print(f"- {rec}")
+    for insight in diagnostic["cross_subject_insights"]:
 
-    print("\n📌 PRIORITY SUBJECTS")
+        print(f"\nPattern: {insight['pattern']}")
+        print(f"Evidence: {insight['evidence']}")
+        print(f"Interpretation: {insight['interpretation']}")
+        print(f"Impact: {insight['impact']}")
 
-    for item in recommendation_result["priority_subjects"]:
-        print(f"{item['subject']} → Priority {item['priority_level']}")
+    print("\nRECOMMENDATIONS")
 
-    print("\n==============================")
+    for rec in recommendations["recommendations"]:
+        print(f"- {rec['message']}")
+
+    print("\nPRIORITY SUBJECTS")
+
+    for item in recommendations["priority_subjects"]:
+        print(f"{item['subject']} (Priority {item['priority_level']})")
+
+        if "reasons" in item:
+            for r in item["reasons"]:
+                print(f"- {r}")
+
+    print("\nDATA QUALITY")
+
+    print(f"Valid Rows: {validation_report['total_valid_rows']}")
+    print(f"Issues Found: {len(validation_report['issues'])}")
+    print(f"Data Quality Score: {validation_report['data_quality']}%")
 
 
 if __name__ == "__main__":
